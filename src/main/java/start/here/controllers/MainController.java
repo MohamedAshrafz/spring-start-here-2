@@ -13,10 +13,11 @@ import java.util.List;
 @Controller
 public class MainController {
 
-    @RequestMapping("/abc/{name}/{color}") // Or @GetMapping("/abc") is often preferred for GET requests
+    @RequestMapping("/abc/{name}") // Or @GetMapping("/abc") is often preferred for GET requests
     public String abc(Model page,
                       @PathVariable("name") String name, // using path parameter instead of query parameter
-                      @RequestParam String color // using query parameter
+                      @RequestParam(required = false) String color // using query parameter
+                      // and you may make it not required
     ) {
         // Existing attributes
         page.addAttribute("username", name);
