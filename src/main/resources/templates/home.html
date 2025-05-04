@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+
+    <meta charset="UTF-8">
+    <title>Home Page</title>
+
+</head>
+
+<body>
+
+<h1>Welcome back <span th:style="'color:' + ${color}"
+                       th:text="${username}">User</span>!, How are you?!</h1>
+
+<!-- Section to display hobbies -->
+<h2>Your Hobbies:</h2>
+
+<!-- Check if the hobbies list is not empty (optional but good practice) -->
+<div th:if="${not #lists.isEmpty(hobbies)}">
+    <ul>
+        <!--
+           th:each iterates over the collection specified in ${hobbies}.
+           'hobby' : This is the iteration variable. In each loop, it holds the current hobby string.
+           '${hobbies}' : This expression accesses the 'hobbies' list we added to the model in the controller.
+           th:text="${hobby}" : This sets the text content of the <li> element to the value of the current 'hobby'.
+        -->
+        <li th:each="hobby : ${hobbies}" th:text="${hobby}">
+            Placeholder Hobby <!-- This content is replaced by Thymeleaf -->
+        </li>
+    </ul>
+</div>
+
+<!-- Message if the hobbies list is empty or null (optional) -->
+<div th:if="${#lists.isEmpty(hobbies)}">
+    <p>You haven't listed any hobbies yet.</p>
+</div>
+
+</body>
+</html>
