@@ -1,42 +1,50 @@
 package start.here.controllers;
 
-import jakarta.websocket.server.PathParam;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
-import java.util.Arrays;
-import java.util.List;
+import org.springframework.web.bind.annotation.*;
+import start.here.Models.Product;
+import start.here.services.ProductServices;
 
 @Controller
 public class MainController {
 
-    @RequestMapping("/abc/{name}") // Or @GetMapping("/abc") is often preferred for GET requests
-    public String abc(Model page,
-                      @PathVariable("name") String name, // using path parameter instead of query parameter
-                      @RequestParam(required = false) String color // using query parameter
-                      // and you may make it not required
+    private final ProductServices productServices;
+
+    public MainController(ProductServices productServices) {
+        this.productServices = productServices;
+    }
+
+    @GetMapping("/products")
+    private String getProducts(Model model) {
+        model.addAttribute("products", productServices.getAllProducts());
+
+        return "products.html";
+    }
+
+    @PostMapping("/products")
+    private String addProduct(
+            @RequestParam String name,
+            @RequestParam float price,
+            Model model
     ) {
-        // Existing attributes
-        page.addAttribute("username", name);
-        page.addAttribute("color", color);
+        Product newProduct = new Product(name, price);
+        productServices.insertProduct(newProduct);
 
-        // 1. Create the list of hobbies
-        List<String> hobbies = Arrays.asList("Reading", "Hiking", "Coding", "Gaming");
-        // Alternatively:
-        // List<String> hobbies = new ArrayList<>();
-        // hobbies.add("Reading");
-        // hobbies.add("Hiking");
-        // hobbies.add("Coding");
-        // hobbies.add("Gaming");
+        model.addAttribute("products", productServices.getAllProducts());
 
+        return "products.html";
+    }
 
-        // 2. Add the list to the model with a key (e.g., "hobbies")
-        page.addAttribute("hobbies", hobbies);
+    @PostMapping("/deleteProduct")
+    private String removeProduct(
+            @RequestParam String uuid,
+            Model model
+    ) {
+        productServices.removeProductWithUUID(uuid);
 
-        // 3. Return the view name
-        return "home.html"; // Or just "home" if you have view resolvers configured
+        model.addAttribute("products", productServices.getAllProducts());
+
+        return "products.html";
     }
 }
